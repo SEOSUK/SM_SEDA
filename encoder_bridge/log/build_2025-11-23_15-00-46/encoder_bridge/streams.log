@@ -1,0 +1,37 @@
+[0.387s] Invoking command in '/home/mrl_6534/ros2_ws/src/encoder_bridge': PYTHONPATH=/home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/encoder_bridge build --build-base /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build install --record /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/install.log --single-version-externally-managed install_data
+[0.528s] running egg_info
+[0.529s] creating build/encoder_bridge/encoder_bridge.egg-info
+[0.529s] writing build/encoder_bridge/encoder_bridge.egg-info/PKG-INFO
+[0.529s] writing dependency_links to build/encoder_bridge/encoder_bridge.egg-info/dependency_links.txt
+[0.529s] writing entry points to build/encoder_bridge/encoder_bridge.egg-info/entry_points.txt
+[0.530s] writing requirements to build/encoder_bridge/encoder_bridge.egg-info/requires.txt
+[0.530s] writing top-level names to build/encoder_bridge/encoder_bridge.egg-info/top_level.txt
+[0.530s] writing manifest file 'build/encoder_bridge/encoder_bridge.egg-info/SOURCES.txt'
+[0.531s] reading manifest file 'build/encoder_bridge/encoder_bridge.egg-info/SOURCES.txt'
+[0.531s] writing manifest file 'build/encoder_bridge/encoder_bridge.egg-info/SOURCES.txt'
+[0.531s] running build
+[0.531s] running build_py
+[0.531s] creating /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build
+[0.531s] creating /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build/lib
+[0.531s] creating /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build/lib/encoder_bridge
+[0.531s] copying encoder_bridge/encoder_angle_hex_node.py -> /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build/lib/encoder_bridge
+[0.531s] copying encoder_bridge/__init__.py -> /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build/lib/encoder_bridge
+[0.531s] running install
+[0.532s] running install_lib
+[0.532s] creating /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/python3.10/site-packages/encoder_bridge
+[0.532s] copying /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build/lib/encoder_bridge/__init__.py -> /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/python3.10/site-packages/encoder_bridge
+[0.532s] copying /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build/lib/encoder_bridge/encoder_angle_hex_node.py -> /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/python3.10/site-packages/encoder_bridge
+[0.533s] byte-compiling /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/python3.10/site-packages/encoder_bridge/__init__.py to __init__.cpython-310.pyc
+[0.533s] byte-compiling /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/python3.10/site-packages/encoder_bridge/encoder_angle_hex_node.py to encoder_angle_hex_node.cpython-310.pyc
+[0.533s] running install_data
+[0.533s] creating /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/share/ament_index
+[0.533s] creating /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/share/ament_index/resource_index
+[0.534s] creating /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/share/ament_index/resource_index/packages
+[0.534s] copying resource/encoder_bridge -> /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/share/ament_index/resource_index/packages
+[0.534s] copying package.xml -> /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/share/encoder_bridge
+[0.534s] running install_egg_info
+[0.535s] Copying build/encoder_bridge/encoder_bridge.egg-info to /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/python3.10/site-packages/encoder_bridge-0.0.0-py3.10.egg-info
+[0.536s] running install_scripts
+[0.550s] Installing encoder_angle_hex_node script to /home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/encoder_bridge
+[0.550s] writing list of installed files to '/home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/install.log'
+[0.574s] Invoked command in '/home/mrl_6534/ros2_ws/src/encoder_bridge' returned '0': PYTHONPATH=/home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/mrl_6534/ros2_ws/src/encoder_bridge/install/encoder_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/encoder_bridge build --build-base /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/build install --record /home/mrl_6534/ros2_ws/src/encoder_bridge/build/encoder_bridge/install.log --single-version-externally-managed install_data

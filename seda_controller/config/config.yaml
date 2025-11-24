@@ -1,0 +1,29 @@
+seda_controller:
+  ros__parameters:
+    dt: 0.005
+
+    # physical parameters (updated for 15cm aluminum profile)
+    I: 0.00030      # kg·m² (inertia of 15cm link, end rotation)
+    m: 0.04         # kg (2020 profile approx)
+    lc: 0.075       # m (half of 0.15m link)
+    g: 9.81         # gravity
+    use_gravity: false # 중력텀 온오프
+
+    # control parameters
+    Kp: 700.0
+    Ki: 10.0          # <<< 여기    
+    Kd: 15.0
+    K_spring: 0.5
+    I_max: 100.0       # 적분 상태 제한 (rad·s 정도 느낌으로 조절)
+
+    # step reference parameters
+    step_period: 5.0    # seconds
+    step_angle: 0.174      # rad, 0이면 항상 0
+
+    qdot_lpf_cutoff_hz: 3.0 # 약 18라디안임
+
+seda_dynamixel:
+  ros__parameters:
+    device_name: "/dev/ttyUSB1"
+    dxl_id: 1
+    baudrate: 1000000

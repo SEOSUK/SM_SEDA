@@ -1,0 +1,3 @@
+[console_scripts]
+encoder_angle_hex_node = encoder_bridge.encoder_angle_hex_node:main
+
