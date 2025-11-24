@@ -250,16 +250,16 @@ private:
     q_error_int_ += q_error * dt_;                 // ∫e dt
     q_error_int_ = std::clamp(q_error_int_, -I_max_, I_max_); // anti-windup
 
-    // v = Kp e + Ki ∫ e dt - Kd q_dot
-    double v = Kp_ * q_error + Ki_ * q_error_int_ - Kd_ * q_dot_meas_;
+    // v = Kp e - Kd q_dot
+    double v = Kp_ * q_error - Kd_ * q_dot_meas_;
 
     // Feedback linearization: tau_des = M(q) v + G(q)
     double tau_des = M_ * v + G_;
 
-    // Control allocation (spring): theta_cmd = q_cmd + tau_des / K
+    // Control allocation (spring): theta_cmd = q_cmd + tau_des / K + Ki ∫ e dt
     // K 는 스프링 계수 (stiffness)
     if (K_spring_ > 1e-6) {
-      theta_cmd_ = q_cmd_ + tau_des / K_spring_;
+      theta_cmd_ = q_cmd_ + tau_des / K_spring_ + Ki_ * q_error_int_;
     } else {
       theta_cmd_ = q_cmd_;  // spring 모델 잘못되면 그냥 q_cmd 추종
     }
