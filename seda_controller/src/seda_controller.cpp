@@ -1,5 +1,5 @@
 // seda_controller.cpp
-//
+// GPT TO DO: 
 // High-level controller node
 // - Subscribes:
 //     /encoder_angle (std_msgs::msg::Float32) → phi_meas_ [rad]
@@ -27,7 +27,7 @@
 //   tau_des = M(q) v + G(q)
 //   theta_cmd = q + tau_des / K   (K = spring stiffness)
 //
-// 모든 파라미터는 config.yaml에서 override 가능.
+// 모든 파라미터는 config.yaml에서 override 가능하도록 할 것.
 
 #include <chrono>
 #include <mutex>
@@ -37,6 +37,10 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float32.hpp"
 #include "std_msgs/msg/float64.hpp"
+
+#include <fstream>
+#include <filesystem>
+#include "ament_index_cpp/get_package_share_directory.hpp"
 
 using namespace std::chrono_literals;
 
@@ -91,6 +95,7 @@ public:
       lpf_alpha_ = RC / (RC + dt_);
     }
 
+
     RCLCPP_INFO(this->get_logger(),
                 "SEDA Controller init: dt = %.4f, cutoff = %.2f Hz, alpha = %.4f",
                 dt_, cutoff_hz, lpf_alpha_);
@@ -98,6 +103,38 @@ public:
                 "Params: I=%.4f, m=%.4f, lc=%.4f, g=%.4f, use_gravity=%d, "
                 "Kp=%.4f, Ki=%.4f, Kd=%.4f, K_spring=%.4f, I_max=%.4f",
                 I_, m_, lc_, g_, use_gravity_, Kp_, Ki_, Kd_, K_spring_, I_max_);
+
+
+    try {
+      namespace fs = std::filesystem;
+
+      // CMake에서 넘겨준 패키지 소스 디렉토리 (예: ~/ros2_ws/src/seda_controller)
+      fs::path src_dir(SEDA_CONTROLLER_SRC_DIR);
+
+      // src/seda_controller/bag 디렉토리
+      fs::path bag_dir = src_dir / "bag";
+      fs::create_directories(bag_dir);
+
+      // CSV 파일 경로: src/seda_controller/bag/seda_log.csv
+      csv_path_ = (bag_dir / "seda_log.csv").string();
+
+      csv_file_.open(csv_path_, std::ios::out | std::ios::trunc);
+      if (csv_file_.is_open()) {
+        csv_file_ << "time,q_cmd,q_meas,theta_cmd,theta_meas\n";
+        csv_file_.flush();
+        csv_initialized_ = true;
+        RCLCPP_INFO(this->get_logger(), "CSV logging to: %s", csv_path_.c_str());
+      } else {
+        RCLCPP_WARN(this->get_logger(),
+                    "Failed to open CSV log file at %s", csv_path_.c_str());
+      }
+    } catch (const std::exception &e) {
+      RCLCPP_WARN(this->get_logger(),
+                  "Exception initializing CSV logging: %s", e.what());
+    }
+
+
+
 
     // ===== Subscribers =====
     // /encoder_angle (Float32) → phi_meas_
@@ -183,6 +220,10 @@ private:
     q_meas_pub_->publish(q_meas_msg);
     q_cmd_pub_->publish(q_cmd_msg);
     q_dot_pub_->publish(q_dot_msg);
+
+
+    // 6) csv logging
+    for_csv_logging();
   }
 
   // ===== Reference / Command Generation =====
@@ -265,6 +306,33 @@ private:
     }
   }
 
+  void for_csv_logging()
+  {
+    // 1st: real_time
+    // 2nd: q_cmd
+    // 3rd: q_meas
+    // 4th: theta_cmd
+    // 5th: theta_meas
+
+    if (!csv_initialized_ || !csv_file_.is_open()) {
+      return;
+    }
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    csv_file_
+      << real_time_   << ","
+      << q_cmd_       << ","
+      << q_meas_      << ","
+      << theta_cmd_   << ","
+      << theta_meas_  << "\n";
+
+    // 자주 flush 해서 노드가 비정상 종료돼도 최대한 데이터 남도록
+    csv_file_.flush();
+  }
+
+
+
+
 private:
   // ROS 인터페이스
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr encoder_sub_;
@@ -315,6 +383,12 @@ private:
 
   double step_period_;   // [sec]
   double step_angle_;    // [rad]  
+
+  // CSV logging
+  std::ofstream csv_file_;
+  bool csv_initialized_ = false;
+  std::string csv_path_;
+
 };
 
 int main(int argc, char ** argv)

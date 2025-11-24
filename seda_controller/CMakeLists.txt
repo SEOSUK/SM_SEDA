@@ -12,6 +12,9 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(dynamixel_sdk REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+
+add_definitions(-DSEDA_CONTROLLER_SRC_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 # === Dynamixel 노드 ===
 add_executable(seda_dynamixel_node
@@ -32,6 +35,7 @@ add_executable(seda_controller_node
 ament_target_dependencies(seda_controller_node
   rclcpp
   std_msgs
+  ament_index_cpp
 )
 
 # === 설치 ===
