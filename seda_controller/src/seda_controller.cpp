@@ -80,6 +80,9 @@ public:
     Ki_        = this->declare_parameter<double>("Ki", 0.0);         // default 0 → 기존 PD와 동일
     I_max_     = this->declare_parameter<double>("I_max", 1.0);      // integral state saturation [rad·s]
 
+    // <<< NEW: outer integral gain on final command
+    outer_Ki_  = this->declare_parameter<double>("outer_Ki", 0.0);   // outer I gain on theta_cmd
+
     // Step reference parameters
     step_period_ = this->declare_parameter<double>("step_period", 3.0);
     step_angle_  = this->declare_parameter<double>("step_angle", M_PI/2);
@@ -101,8 +104,8 @@ public:
                 dt_, cutoff_hz, lpf_alpha_);
     RCLCPP_INFO(this->get_logger(),
                 "Params: I=%.4f, m=%.4f, lc=%.4f, g=%.4f, use_gravity=%d, "
-                "Kp=%.4f, Ki=%.4f, Kd=%.4f, K_spring=%.4f, I_max=%.4f",
-                I_, m_, lc_, g_, use_gravity_, Kp_, Ki_, Kd_, K_spring_, I_max_);
+                "Kp=%.4f, Ki=%.4f, Kd=%.4f, K_spring=%.4f, I_max=%.4f, outer_Ki=%.4f",
+                I_, m_, lc_, g_, use_gravity_, Kp_, Ki_, Kd_, K_spring_, I_max_, outer_Ki_);
 
 
     try {
@@ -280,31 +283,37 @@ private:
   }
 
   // ===== 제어 law: PID(사실상 P+I+D) + Feedback Linearization + Control Allocation =====
-  void computeThetaCommand()
-  {
-    std::lock_guard<std::mutex> lock(mutex_);
+void computeThetaCommand()
+{
+  std::lock_guard<std::mutex> lock(mutex_);
 
-    // Joint error
-    double q_error = q_cmd_ - q_meas_;
+  // Joint error
+  double q_error = q_cmd_ - q_meas_;
 
-    // <<< NEW: integrate error (I term)
-    q_error_int_ += q_error * dt_;                 // ∫e dt
-    q_error_int_ = std::clamp(q_error_int_, -I_max_, I_max_); // anti-windup
+  // ∫e dt (공통 적분 상태, anti-windup)
+  q_error_int_ += q_error * dt_;
+  q_error_int_ = std::clamp(q_error_int_, -I_max_, I_max_);
 
-    // v = Kp e - Kd q_dot
-    double v = Kp_ * q_error - Kd_ * q_dot_meas_;
+  // === Feedback Linearization 쪽 가상 입력 v ===
+  // v = Kp e + Ki ∫e dt - Kd q_dot
+  double v = Kp_ * q_error + Ki_ * q_error_int_ - Kd_ * q_dot_meas_;
 
-    // Feedback linearization: tau_des = M(q) v + G(q)
-    double tau_des = M_ * v + G_;
+  // Feedback linearization: tau_des = M(q) v + G(q)
+  double tau_des = M_ * v + G_;
 
-    // Control allocation (spring): theta_cmd = q_cmd + tau_des / K + Ki ∫ e dt
-    // K 는 스프링 계수 (stiffness)
-    if (K_spring_ > 1e-6) {
-      theta_cmd_ = q_cmd_ + tau_des / K_spring_ + Ki_ * q_error_int_;
-    } else {
-      theta_cmd_ = q_cmd_;  // spring 모델 잘못되면 그냥 q_cmd 추종
-    }
+  // === 스프링을 통한 theta 명령 + outer I term ===
+  // 기본 feedforward: theta_ff = q_cmd + tau_des / K_spring
+  if (K_spring_ > 1e-6) {
+    double theta_ff = q_cmd_ + tau_des / K_spring_;
+
+    // 최종 명령단 I 게인: outer_Ki * ∫e dt
+    theta_cmd_ = theta_ff + outer_Ki_ * q_error_int_;
+  } else {
+    // spring 모델 잘못되면 그냥 q_cmd 추종 + outer I만 적용
+    theta_cmd_ = q_cmd_ + outer_Ki_ * q_error_int_;
   }
+}
+
 
   void for_csv_logging()
   {
@@ -369,13 +378,14 @@ private:
 
   // 제어 파라미터
   double Kp_;
-  double Ki_;        // <<< NEW: integral gain
+  double Ki_;        // FL용 I gain
   double Kd_;
   double K_spring_;
   double q_cmd_default_;
 
-  double I_max_;     // <<< NEW: integral saturation bound
-  double q_error_int_; // <<< NEW: ∫(q_cmd - q_meas) dt
+  double I_max_;        // integral saturation bound
+  double q_error_int_;  // ∫(q_cmd - q_meas) dt
+  double outer_Ki_;     // 최종 theta_cmd에 붙는 I gain
 
   // 동역학 항 (매 step 업데이트)
   double M_;             // inertia scalar

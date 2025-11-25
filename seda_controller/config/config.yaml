@@ -10,17 +10,17 @@ seda_controller:
     use_gravity: false # 중력텀 온오프
 
     # control parameters
-    Kp: 200.0     # 500 언저리 넘어가면 발산하기 시작함
-    Ki: 2.0              
-    Kd: 15.0
+    Kp: 100.0     # 500 언저리 넘어가면 발산하기 시작함
+    Ki: 10.0      # Feedback Linearization I gain        
+    Kd: 20.0
     K_spring: 0.5
     I_max: 300.0       # 적분 상태 제한 (rad·s 정도 느낌으로 조절)
-
+    outer_Ki: 10.0      # Final Heuristic I Gain
     # step reference parameters
     step_period: 5.0    # seconds
-    step_angle: 0.2      # rad, 10도 하고싶으면 0.174 하면 됨
+    step_angle: -0.174      # rad, 10도 하고싶으면 0.174 하면 됨
 
-    qdot_lpf_cutoff_hz: 3.0 # 약 18라디안임
+    qdot_lpf_cutoff_hz: 5.0 # 약 18라디안임
 
 seda_dynamixel:
   ros__parameters:
