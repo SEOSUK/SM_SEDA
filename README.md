@@ -3,7 +3,8 @@
 
 **Project Period:** Jun. 2025 – Nov. 2025
 
-SM-SEDA is a follow-up project to the **SEDA Project**, replacing the conventional spring-damper mechanism with a **viscoelastic chiral metamaterial structure** for compact passive compliance.
+## 🔹 Overview
+SM-SEDA extends the original **SEDA Project** using a **viscoelastic chiral metamaterial structure** for compact passive compliance.
 
 🔗 [Original SEDA Project](https://github.com/SEOSUK/DONE-SEDA_Project)
 
@@ -12,6 +13,9 @@ SM-SEDA is a follow-up project to the **SEDA Project**, replacing the convention
        alt="SM-SEDA System Overview"
        width="850">
 </div>
+
+- **Replaces the conventional SEA structure with a chiral metamaterial.**
+- **Mechanical properties are tuned through geometric pattern design.**
 
 ## 🎥 Project Demo
 
